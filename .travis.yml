@@ -1,0 +1,31 @@
+sudo: false
+language: java
+jdk:
+  - oraclejdk8
+addons:
+  apt:
+    packages:
+      - libxml2-utils
+      - rpm
+before_install:
+  # Get Graylog version from Maven POM (property: "graylog2.version")
+  - export GRAYLOG_VERSION=$(xmllint --xpath '/*[local-name()="project"]/*[local-name()="properties"]/*[local-name()="graylog2.version"]/text()' pom.xml)
+  - echo "Building against Graylog ${GRAYLOG_VERSION}"
+before_deploy:
+  - mvn jdeb:jdeb && export RELEASE_DEB_FILE=$(ls target/*.deb)
+  - mvn rpm:rpm && export RELEASE_RPM_FILE=$(find target/ -name '*.rpm' | tail -1)
+  - rm -f target/original-*.jar
+  - export RELEASE_PKG_FILE=$(ls target/*.jar)
+  - echo "Deploying release to GitHub releases"
+deploy:
+  provider: releases
+  api_key:
+    secure: lkjlakjdslkd
+  file:
+    - "${RELEASE_PKG_FILE}"
+    - "${RELEASE_DEB_FILE}"
+    - "${RELEASE_RPM_FILE}"
+  skip_cleanup: true
+  on:
+    tags: true
+    jdk: oraclejdk8
