@@ -16,9 +16,9 @@ before_install:
 - echo "Building against Graylog ${GRAYLOG_VERSION}"
 - git clone https://github.com/Graylog2/graylog2-server.git ../graylog2-server --branch ${GRAYLOG_VERSION}
 - cd ../graylog2-server/graylog2-web-interface
-- npm install
 - npm install webpack webpack-cli -g
-- npm run webpack --config webpack.vendor.js
+- ls -al /usr/local/lib/node_modules
+- webpack --config webpack.vendor.js
 - cd ${TRAVIS_BUILD_DIR}
 before_deploy:
 - mvn jdeb:jdeb && export RELEASE_DEB_FILE=$(ls target/*.deb)
