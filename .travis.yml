@@ -1,26 +1,29 @@
-sudo: false
+sudo: required
+dist: trusty
 language: java
 jdk:
   - oraclejdk8
+jdk:
+- oraclejdk8
 addons:
   apt:
     packages:
-      - libxml2-utils
-      - rpm
+    - libxml2-utils
+    - rpm
 before_install:
-  # Get Graylog version from Maven POM (property: "graylog2.version")
-  - export GRAYLOG_VERSION=$(xmllint --xpath '/*[local-name()="project"]/*[local-name()="properties"]/*[local-name()="graylog2.version"]/text()' pom.xml)
-  - echo "Building against Graylog ${GRAYLOG_VERSION}"
+- export GRAYLOG_VERSION=$(xmllint --xpath '/*[local-name()="project"]/*[local-name()="properties"]/*[local-name()="graylog2.version"]/text()'
+  pom.xml)
+- echo "Building against Graylog ${GRAYLOG_VERSION}"
 before_deploy:
-  - mvn jdeb:jdeb && export RELEASE_DEB_FILE=$(ls target/*.deb)
-  - mvn rpm:rpm && export RELEASE_RPM_FILE=$(find target/ -name '*.rpm' | tail -1)
-  - rm -f target/original-*.jar
-  - export RELEASE_PKG_FILE=$(ls target/*.jar)
-  - echo "Deploying release to GitHub releases"
+- mvn jdeb:jdeb && export RELEASE_DEB_FILE=$(ls target/*.deb)
+- mvn rpm:rpm && export RELEASE_RPM_FILE=$(find target/ -name '*.rpm' | tail -1)
+- rm -f target/original-*.jar
+- export RELEASE_PKG_FILE=$(ls target/*.jar)
+- echo "Deploying release to GitHub releases"
 deploy:
   provider: releases
   api_key:
-    secure: lkjlakjdslkd
+    secure: XgC/d7wD4Drw/M5T1XpDrtNaP7yvGZtkASNMhkTQfPQ5GOJEL/PZaBEUMW845GdfLVtOsV+VKde6weYKa84PzxGIr24mI43ghUHfZ6ezemmpRXx3e32LuJZLMiGqMBVPdo/1pv1P9ISSL1ajJ3oeaUW6MyMIZo3Jv33WkNPs9y1EUUvR25mwZmPNoyRz7UXKEXj8zz3iKs4fkykyL/S16f3+81lX8MT5NMmKzNGfCNwUEIkGw5zHPJo5/6jM+PIEnBOwP9RZheCbXsbcUkMsEWhjuZGzjHBB8qOzaPyh1OFueY8uXzjvk6yijgUyFdS85X9mrkuZfThQlQVIeT++NWyLhQiy1PSgWngpwS/i+2iEzjbmCGsd126c33J5Y7w+uwhpOwMptu7AJQTpqT2mMhS9nhKHWhNpTfm47YxZo1q3hj3zaqqWe9UTkn8ROb2iuCwXnEf67VPfC/OhTOmzR+N3eYRDeDwG8FCbL3lHOqnP2rFw8uWT1GJh29cnUBmFT/aSgkhRCd+W2eQuUCKlt/ziRu7rKo9H8KXO3pEn24lRH9Op2mSLP0HjIVRiAIeHNdklMkB/H+OZYxl/NaopB1jQEiU53fkAO2XktqcO3mZWCP/mrBGZQZkTRlaLv02I5PvhPrHdJ90CwQcXMuKOJOJOe3pL29QH4NLH73ON6ZY=
   file:
     - "${RELEASE_PKG_FILE}"
     - "${RELEASE_DEB_FILE}"
