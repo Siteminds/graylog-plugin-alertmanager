@@ -9,9 +9,9 @@
 
     <parent>
         <groupId>org.graylog.plugins</groupId>
-        <artifactId>graylog-plugin-parent</artifactId>
-        <version>2.4.0</version>
-        <relativePath>../graylog2-server/graylog-plugin-parent</relativePath>
+        <artifactId>graylog-plugin-web-parent</artifactId>
+        <version>2.4.5</version>
+        <relativePath>../graylog2-server/graylog-plugin-parent/graylog-plugin-web-parent</relativePath>
     </parent>
 
     <groupId>org.graylog.plugins</groupId>
@@ -83,6 +83,15 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>build</directory>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

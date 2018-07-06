@@ -26,10 +26,7 @@ import java.net.MalformedURLException;
 import java.net.Proxy;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Collections;
+import java.util.*;
 
 
 public class AlertManagerClient {
@@ -54,6 +51,7 @@ public class AlertManagerClient {
         this.httpProxyUri = httpProxyUri;
         this.clientUrl = clientUrl;
         this.objectMapper = objectMapper;
+        this.objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX"));
     }
 
     public AlertManagerClient(final URI httpProxyUri,
@@ -89,7 +87,7 @@ public class AlertManagerClient {
         conn.setDoOutput(true);
 
         try (final OutputStream requestStream = conn.getOutputStream()) {
-            final AlertManagerEvent event = buildAlertManagerEvent(stream, checkResult);
+            final List<AlertManagerEvent> event = buildAlertManagerEvent(stream, checkResult);
             LOG.debug("going to send AlertManager event:");
             LOG.debug(objectMapper.writeValueAsString(event));
             requestStream.write(objectMapper.writeValueAsBytes(event));
@@ -124,25 +122,28 @@ public class AlertManagerClient {
         return baseUrl + "streams/" + stream.getId() + "/messages?q=*&rangetype=relative&relative=3600";
     }
 
-    private AlertManagerEvent buildAlertManagerEvent(final Stream stream, final AlertCondition.CheckResult checkResult) {
+    private List<AlertManagerEvent> buildAlertManagerEvent(final Stream stream, final AlertCondition.CheckResult checkResult) {
         final String alertDescription = checkResult.getTriggeredCondition().getDescription();
         final String description = "[ " + stream.getTitle() + " ] " + checkResult.getResultDescription();
 
-        return new AlertManagerEvent(
-                ImmutableMap.<String, Object>of(
+        final AlertManagerEvent event = new AlertManagerEvent(
+                ImmutableMap.<String, String>of(
                         "stream_id", stream.getId(),
                         "stream_title", stream.getTitle(),
-                        "backlog", checkResult.getTriggeredCondition().getBacklog(),
-                        "search_hits", getAlarmBacklog(checkResult).size(),
+                        "backlog", Integer.toString(checkResult.getTriggeredCondition().getBacklog()),
+                        "search_hits", Integer.toString(getAlarmBacklog(checkResult).size()),
                         "alert_description", alertDescription
                 ),
                 ImmutableMap.<String, Object>of(
                         "summary", "Graylog alert for " + stream.getTitle(),
                         "description", description
                 ),
-                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").format(new Date()),
+                new Date(),
                 buildStreamLink(clientUrl, stream)
         );
+        List<AlertManagerEvent> list = new ArrayList<>();
+        list.add(event);
+        return list;
     }
 
     protected List<Message> getAlarmBacklog(AlertCondition.CheckResult result) {
@@ -168,19 +169,20 @@ public class AlertManagerClient {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class AlertManagerEvent {
+
         @JsonProperty
-        public Map<String, Object> labels;
+        public Map<String, String> labels;
         @JsonProperty
         public Map<String, Object> annotations;
         @JsonProperty
-        public String startsAt;
+        public Date startsAt;
         @JsonProperty
         public String generatorURL;
 
 
-        public AlertManagerEvent(Map<String, Object> labels,
+        public AlertManagerEvent(Map<String, String> labels,
                                  Map<String, Object> annotations,
-                                 String startsAt,
+                                 Date startsAt,
                                  String generatorURL) {
             this.labels = labels;
             this.annotations = annotations;

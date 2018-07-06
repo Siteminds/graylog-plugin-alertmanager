@@ -1,0 +1,21 @@
+{
+  "name": "graylog-plugin-alertmanager",
+  "version": "0.1.0-SNAPSHOT",
+  "description": "Graylog plugin to allow sending alert notifications to Prometheus AlertManager",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Siteminds/graylog-plugin-alertmanager"
+  },
+  "scripts": {
+    "build": "webpack --bail"
+  },
+  "keywords": [
+    "graylog"
+  ],
+  "author": "Siteminds B.V. <info@siteminds.nl>",
+  "license": "GPL-3.0",
+  "dependencies": {},
+  "devDependencies": {
+    "graylog-web-plugin": "file:../graylog2-server/graylog2-web-interface/packages/graylog-web-plugin"
+  }
+}
