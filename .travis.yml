@@ -15,7 +15,7 @@ before_install:
   pom.xml)
 - echo "Building against Graylog ${GRAYLOG_VERSION}"
 - git clone https://github.com/Graylog2/graylog2-server.git ../graylog2-server --branch ${GRAYLOG_VERSION}
-- npm install webpack -g
+- npm install webpack webpack-cli -g
 - cd ../graylog2-server/graylog2-web-interface
 - webpack --config webpack.vendor.js
 - cd ${TRAVIS_BUILD_DIR}
