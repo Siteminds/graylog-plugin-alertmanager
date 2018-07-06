@@ -21,6 +21,8 @@ before_install:
 - ./node_modules/.bin/webpack --config webpack.vendor.js
 - cd ${PROJECTDIR}
 before_deploy:
+- git config --local user.name "bjwschaap"
+- git config --local user.email "bastiaan.schaap@siteminds.nl"
 - mvn jdeb:jdeb && export RELEASE_DEB_FILE=$(ls target/*.deb)
 - mvn rpm:rpm && export RELEASE_RPM_FILE=$(find target/ -name '*.rpm' | tail -1)
 - rm -f target/original-*.jar
