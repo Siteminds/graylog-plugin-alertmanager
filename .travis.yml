@@ -15,11 +15,11 @@ before_install:
   pom.xml)
 - echo "Building against Graylog ${GRAYLOG_VERSION}"
 - git clone https://github.com/Graylog2/graylog2-server.git ../graylog2-server --branch ${GRAYLOG_VERSION}
+- export PROJECTDIR=$(pwd)
 - cd ../graylog2-server/graylog2-web-interface
-- npm install webpack webpack-cli -g
-- ls -al /usr/local/lib/node_modules
-- webpack --config webpack.vendor.js
-- cd ${TRAVIS_BUILD_DIR}
+- npm install
+- ./node_modules/.bin/webpack --config webpack.vendor.js
+- cd ${PROJECTDIR}
 before_deploy:
 - mvn jdeb:jdeb && export RELEASE_DEB_FILE=$(ls target/*.deb)
 - mvn rpm:rpm && export RELEASE_RPM_FILE=$(find target/ -name '*.rpm' | tail -1)
