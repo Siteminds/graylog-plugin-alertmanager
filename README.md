@@ -10,7 +10,7 @@ Prometheus [AlertManager](https://prometheus.io/docs/alerting/alertmanager/)
 Installation
 ------------
 
-[Download the plugin](https://github.com/https://github.com/Siteminds/graylog-plugin-alertmanager/releases)
+[Download the plugin](https://github.com/Siteminds/graylog-plugin-alertmanager/releases)
 and place the `.jar` file in your Graylog plugin directory. The plugin directory
 is the `plugins/` folder relative from your `graylog-server` directory by default
 and can be configured in your `graylog.conf` file.
